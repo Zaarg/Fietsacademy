@@ -5,9 +5,8 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED) @Table(name = "cursussen")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS) 
 public abstract class Cursus implements Serializable {
- 
 	
 	private static final long serialVersionUID = 1L;
 	
