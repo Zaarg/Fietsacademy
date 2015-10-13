@@ -20,5 +20,5 @@ abstract class AbstractDAO {
   
 	public void rollback() {
 		getEntityManager().getTransaction().rollback();
-	}
+	} 
 } 
