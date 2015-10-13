@@ -5,7 +5,9 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@DiscriminatorValue("G") public class GroepsCursus extends Cursus { 
+@Table(name = "groepscursussen")
+public class GroepsCursus extends Cursus {
+ 
   private static final long serialVersionUID = 1L;
   @Temporal(TemporalType.DATE) 
   private Date van;

@@ -5,10 +5,9 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Table(name = "cursussen")
-@DiscriminatorColumn(name = "Soort")
-public abstract class Cursus implements Serializable { 
+@Inheritance(strategy = InheritanceType.JOINED) @Table(name = "cursussen")
+public abstract class Cursus implements Serializable {
+ 
 	
 	private static final long serialVersionUID = 1L;
 	
