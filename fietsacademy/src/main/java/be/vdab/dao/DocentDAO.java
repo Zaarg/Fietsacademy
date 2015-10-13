@@ -43,5 +43,11 @@ public class DocentDAO extends AbstractDAO {
 	public List<AantalDocentenPerWedde> findAantalDocentenPerWedde() {
 		return getEntityManager().createQuery("select new be.vdab.valueobjects.AantalDocentenPerWedde(d.wedde,count(d))" +
 		    " from Docent d group by d.wedde", AantalDocentenPerWedde.class).getResultList();
-	} 
+	}
+	
+	public void algemeneOpslag(BigDecimal factor) {
+		  getEntityManager().createNamedQuery("Docent.algemeneOpslag")
+		    .setParameter("factor", factor)
+		     .executeUpdate();
+		}
 } 

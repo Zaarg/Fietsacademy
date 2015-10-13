@@ -52,5 +52,13 @@ public class DocentService {
 	
 	public List<AantalDocentenPerWedde> findAantalDocentenPerWedde() {
 		return docentDAO.findAantalDocentenPerWedde();
+	}
+	
+	public void algemeneOpslag(BigDecimal percentage) {
+		  BigDecimal factor = BigDecimal.ONE.add(
+		    percentage.divide(BigDecimal.valueOf(100)));
+		  docentDAO.beginTransaction();
+		  docentDAO.algemeneOpslag(factor);
+		  docentDAO.commit();
 	} 
 } 
