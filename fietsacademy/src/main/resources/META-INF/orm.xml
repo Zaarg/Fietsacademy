@@ -11,9 +11,14 @@
     </query>
   </named-query>
   <named-query name='Docent.algemeneOpslag'>
-  <query>
-    update Docent d
-    set d.wedde = d.wedde * :factor
-  </query>
-</named-query>
+  	<query>
+    	update Docent d
+    	set d.wedde = d.wedde * :factor
+	  </query>
+	</named-query>
+	<named-query name='Cursus.findByNaamContains'>
+	  <query>
+	    	select c from Cursus c where c.naam like :zoals order by c.naam 
+	  </query>
+	</named-query> 
 </entity-mappings> 
