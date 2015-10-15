@@ -34,7 +34,7 @@ public class Docent implements Serializable {
 	@Column(name = "Bijnaam") 
 	private Set<String> bijnamen;
 	
-	@ManyToOne(optional = false) 
+	@ManyToOne(fetch = FetchType.LAZY,optional = false) 
 	@JoinColumn(name = "campusid") 
 	private Campus campus;
 
