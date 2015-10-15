@@ -24,8 +24,12 @@ public class Campus implements Serializable {
   @OrderBy("fax") 
   private Set<TelefoonNr> telefoonNrs; 
   
-  // je maakt getters en setters voor de niet-static private variabelen
+  @OneToMany @JoinColumn(name = "campusid") 
+  @OrderBy("voornaam, familienaam") 
+  private Set<Docent> docenten; 
+    
   public Campus(String naam, Adres adres) {
+	docenten = new LinkedHashSet<>(); 
 	telefoonNrs = new LinkedHashSet<>();
 	setNaam(naam);
     setAdres(adres);
@@ -33,6 +37,18 @@ public class Campus implements Serializable {
   
   protected Campus() {}
 
+  public Set<Docent> getDocenten() {
+	    return Collections.unmodifiableSet(docenten);
+  } 
+  
+  public void addDocent(Docent docent) {
+	    docenten.add(docent);
+  } 
+  
+  public void removeDocent(Docent docent) {
+	    docenten.remove(docent);
+  }
+  
   public Set<TelefoonNr> getTelefoonNrs() {
 	  return Collections.unmodifiableSet(telefoonNrs);
   }
