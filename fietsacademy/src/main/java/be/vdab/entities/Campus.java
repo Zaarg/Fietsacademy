@@ -44,8 +44,12 @@ public class Campus implements Serializable {
   public void removeTelefoonNr(TelefoonNr telefoonNr) {
 	  telefoonNrs.remove(telefoonNr);
 	}
-  
-  public String getNaam() {
+    
+  public long getId() {
+	return id;
+  }
+
+public String getNaam() {
 	return naam;
   }
 

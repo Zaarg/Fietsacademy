@@ -17,18 +17,27 @@ import be.vdab.enums.Geslacht;
 public class Docent implements Serializable { 
 	
 	private static final long serialVersionUID = 1L;
+	
 	@Id 
 	@GeneratedValue 
 	private long id;
+	
 	private String voornaam; 
 	private String familienaam;
 	private BigDecimal wedde;
 	private long rijksRegisterNr;
+	
 	@Enumerated(EnumType.STRING) private Geslacht geslacht;
+	
 	@ElementCollection 
 	@CollectionTable(name = "docentenbijnamen",	joinColumns = @JoinColumn(name = "docentid") ) 
 	@Column(name = "Bijnaam") 
-	private Set<String> bijnamen; 
+	private Set<String> bijnamen;
+	
+	@ManyToOne(optional = false) 
+	@JoinColumn(name = "campusid") 
+	private Campus campus;
+
 
 	public Docent(String voornaam, String familienaam, BigDecimal wedde, Geslacht geslacht, long rijksRegisterNr) {
 		bijnamen = new HashSet<>();
@@ -40,7 +49,15 @@ public class Docent implements Serializable {
 	} 
 
 	protected Docent() {}// default constructor is vereiste voor JPA
-	
+		
+	public Campus getCampus() {
+		return campus;
+	}
+
+	public void setCampus(Campus campus) {
+		this.campus = campus;
+	}
+
 	public void setVoornaam(String voornaam) {
 		if (!isVoornaamValid(voornaam)) {
 			throw new IllegalArgumentException();
