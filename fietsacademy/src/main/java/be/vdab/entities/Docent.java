@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -51,7 +52,7 @@ public class Docent implements Serializable {
 	@ManyToMany(mappedBy = "docenten") 
 	private Set<Verantwoordelijkheid> verantwoordelijkheden; 
 	
-	@Version private long versie;
+	@Version private Timestamp versie;
 	
 	public void addVerantwoordelijkheid(Verantwoordelijkheid verantwoordelijkheid) {
 		verantwoordelijkheden.add(verantwoordelijkheid);
