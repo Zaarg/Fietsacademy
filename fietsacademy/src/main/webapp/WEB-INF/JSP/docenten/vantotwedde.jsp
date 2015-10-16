@@ -32,7 +32,7 @@
     <table>
       <thead>
         <tr>
-          <th>Nummer</th><th>Naam</th><th>Wedde</th>
+          <th>Nummer</th><th>Naam</th><th>Wedde</th><th>Campus</th>
         </tr>
       </thead>
       <tbody>
@@ -41,6 +41,7 @@
             <td>${docent.id}</td>
             <td>${docent.naam}</td>
             <td><fmt:formatNumber value='${docent.wedde}' minFractionDigits='2' maxFractionDigits='2'/></td>
+          	<td>${docent.campus.naam}</td>
           </tr>
         </c:forEach>
       </tbody>

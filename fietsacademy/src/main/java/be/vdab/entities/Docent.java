@@ -6,6 +6,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -13,10 +14,19 @@ import javax.persistence.*;
 import be.vdab.enums.Geslacht;
 
 @Entity
-@Table(name = "docenten") 
+@Table(name = "docenten")
+@NamedEntityGraphs ({
+@NamedEntityGraph(name = "Docent.MET_CAMPUS", attributeNodes = @NamedAttributeNode("campus")),
+@NamedEntityGraph(name = "Docent.metCampusEnVerantwoordelijkheden"
+					,attributeNodes = {@NamedAttributeNode("campus"), @NamedAttributeNode("verantwoordelijkheden")}),
+@NamedEntityGraph(name = "Docent.metCampusEnManager"
+					,attributeNodes = @NamedAttributeNode(value = "campus", subgraph = "metManager")
+						,subgraphs = @NamedSubgraph(name = "metManager", attributeNodes = @NamedAttributeNode("manager")))  
+})
 public class Docent implements Serializable { 
 	
 	private static final long serialVersionUID = 1L;
+	public static final String MET_CAMPUS = "metCampus";
 	
 	@Id 
 	@GeneratedValue 
@@ -34,13 +44,34 @@ public class Docent implements Serializable {
 	@Column(name = "Bijnaam") 
 	private Set<String> bijnamen;
 	
-	/*@ManyToOne(fetch = FetchType.LAZY,optional = false) 
+	@ManyToOne(fetch = FetchType.LAZY,optional = false) 
 	@JoinColumn(name = "campusid") 
-	private Campus campus;*/
-
+	private Campus campus;
+	
+	@ManyToMany(mappedBy = "docenten") 
+	private Set<Verantwoordelijkheid> verantwoordelijkheden; 
+	
+	public void addVerantwoordelijkheid(Verantwoordelijkheid verantwoordelijkheid) {
+		verantwoordelijkheden.add(verantwoordelijkheid);
+		if ( ! verantwoordelijkheid.getDocenten().contains(this)) {
+		      verantwoordelijkheid.addDocent(this);
+		}
+	} 
+	
+	public void removeVerantwoordelijkheid(Verantwoordelijkheid verantwoordelijkheid) {
+			verantwoordelijkheden.remove(verantwoordelijkheid);
+			if (verantwoordelijkheid.getDocenten().contains(this)) {
+			    verantwoordelijkheid.removeDocent(this);
+			  }
+	} 
+	
+	public Set<Verantwoordelijkheid> getVerantwoordelijkheden() {
+		  return Collections.unmodifiableSet(verantwoordelijkheden);
+	} 
 
 	public Docent(String voornaam, String familienaam, BigDecimal wedde, Geslacht geslacht, long rijksRegisterNr) {
 		bijnamen = new HashSet<>();
+		verantwoordelijkheden = new LinkedHashSet<>();
 		setVoornaam(voornaam);
 		setFamilienaam(familienaam);
 		setWedde(wedde);
@@ -49,14 +80,20 @@ public class Docent implements Serializable {
 	} 
 
 	protected Docent() {}// default constructor is vereiste voor JPA
-		
-	/*public Campus getCampus() {
+	
+	public Campus getCampus() {
 		return campus;
 	}
 
 	public void setCampus(Campus campus) {
-		this.campus = campus;
-	}*/
+		  if (this.campus != null && this.campus.getDocenten().contains(this)) {   // als de andere kant nog niet bijgewerkt is
+		    this.campus.removeDocent(this);   									   // werk je de andere kant bij
+		  }
+		  this.campus = campus;
+		  if (campus != null && !campus.getDocenten().contains(this)) {   // als de andere kant nog niet bijgewerkt is
+		    campus.addDocent(this);   										// werk je de andere kant bij
+		  }
+	}
 
 	public void setVoornaam(String voornaam) {
 		if (!isVoornaamValid(voornaam)) {

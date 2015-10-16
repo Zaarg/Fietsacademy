@@ -16,6 +16,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import be.vdab.entities.Docent;
 import be.vdab.enums.Geslacht;
+import be.vdab.exceptions.DocentBestaatAlException;
 import be.vdab.services.CampusService;
 import be.vdab.services.DocentService;
 
@@ -71,21 +72,22 @@ public class ToevoegenServlet extends HttpServlet {
 		if (campusId == null) {
 		  fouten.put("campussen", "verplicht");
 		} 
-		if (fouten.isEmpty()) {
-			Docent docent = new Docent(voornaam, familienaam, wedde, Geslacht.valueOf(geslacht), rijksRegisterNr);
-			docent.setCampus(campusService.read(Long.parseLong(campusId)));
-			try {
-				docentService.create(docent);
-			} catch (PersistenceException x) {
-				fouten.put("rijksregisternr", "moet uniek zijn!");
-				request.setAttribute("fouten", fouten);
-				request.getRequestDispatcher(VIEW).forward(request, response);
+		if (fouten.isEmpty()) { 
+			  Docent docent = new Docent(voornaam, familienaam, wedde,
+			    Geslacht.valueOf(geslacht), rijksRegisterNr);
+			  docent.setCampus(campusService.read(Long.parseLong(campusId)));
+			  try {
+			    docentService.create(docent);
+			    response.sendRedirect(response.encodeRedirectURL(
+			      String.format(REDIRECT_URL, request.getContextPath(), docent.getId())));
+			  } catch (DocentBestaatAlException ex) {
+			    fouten.put("rijksregisternr", "bestaat al");
+			  }
 			}
-			response.sendRedirect(response.encodeRedirectURL(String.format(REDIRECT_URL, request.getContextPath(), docent.getId())));
-		} else {
-			request.setAttribute("fouten", fouten);
-			request.setAttribute("campussen", campusService.findAll());
-			request.getRequestDispatcher(VIEW).forward(request, response);
-		}
+		if ( ! fouten.isEmpty()) {
+		  request.setAttribute("fouten", fouten);
+		  request.setAttribute("campussen", campusService.findAll());
+		  request.getRequestDispatcher(VIEW).forward(request, response);
+		} 
 	}
 }

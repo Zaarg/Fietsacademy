@@ -24,10 +24,17 @@ public class Campus implements Serializable {
   @OrderBy("fax") 
   private Set<TelefoonNr> telefoonNrs; 
   
-  @OneToMany @JoinColumn(name = "campusid") 
+  @OneToMany (mappedBy = "campus")  
   @OrderBy("voornaam, familienaam") 
   private Set<Docent> docenten; 
-    
+  
+  @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "managerid") 
+  private Manager manager; 
+  
+  public Manager getManager() {
+    return manager;
+  } 
+  
   public Campus(String naam, Adres adres) {
 	docenten = new LinkedHashSet<>(); 
 	telefoonNrs = new LinkedHashSet<>();
@@ -42,12 +49,18 @@ public class Campus implements Serializable {
   } 
   
   public void addDocent(Docent docent) {
-	    docenten.add(docent);
-  } 
+	  docenten.add(docent);
+	  if (docent.getCampus() != this) { // als de andere kant nog niet bijgewerkt is
+	    docent.setCampus(this);         // werk je de andere kant bij
+	  }
+  }  
   
   public void removeDocent(Docent docent) {
-	    docenten.remove(docent);
-  }
+	  docenten.remove(docent);
+	  if (docent.getCampus() == this) { // als de andere kant nog niet bijgewerkt is
+	    docent.setCampus(null);         // werk je de andere kant bij
+	  }
+  } 
   
   public Set<TelefoonNr> getTelefoonNrs() {
 	  return Collections.unmodifiableSet(telefoonNrs);
