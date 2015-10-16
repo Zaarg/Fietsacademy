@@ -51,6 +51,8 @@ public class Docent implements Serializable {
 	@ManyToMany(mappedBy = "docenten") 
 	private Set<Verantwoordelijkheid> verantwoordelijkheden; 
 	
+	@Version private long versie;
+	
 	public void addVerantwoordelijkheid(Verantwoordelijkheid verantwoordelijkheid) {
 		verantwoordelijkheden.add(verantwoordelijkheid);
 		if ( ! verantwoordelijkheid.getDocenten().contains(this)) {

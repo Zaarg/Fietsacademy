@@ -4,11 +4,14 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
+import javax.persistence.RollbackException;
 
 import be.vdab.dao.CampusDAO;
 import be.vdab.dao.DocentDAO;
 import be.vdab.entities.Docent;
 import be.vdab.exceptions.DocentBestaatAlException;
+import be.vdab.exceptions.RecordAangepastException;
 import be.vdab.filters.JPAFilter;
 import be.vdab.valueobjects.AantalDocentenPerWedde;
 import be.vdab.valueobjects.VoornaamEnId;
@@ -42,11 +45,16 @@ public class DocentService {
 	} 
 	
 	public void opslag(long id, BigDecimal percentage) {
-		  docentDAO.beginTransaction();
-		  docentDAO.read(id).opslag(percentage);
-		  docentDAO.commit();
-		 
-	}
+		docentDAO.beginTransaction();
+		docentDAO.read(id).opslag(percentage);   
+		try {
+			docentDAO.commit();
+		} catch (RollbackException ex) {     
+			if (ex.getCause() instanceof OptimisticLockException) {       
+				throw new RecordAangepastException();
+		    }
+		}
+	} 
 	
 	public List<Docent> findByWeddeBetween(BigDecimal van, BigDecimal tot, int vanafRij, int aantalRijen) {
 			  return docentDAO.findByWeddeBetween(van, tot, vanafRij, aantalRijen);
