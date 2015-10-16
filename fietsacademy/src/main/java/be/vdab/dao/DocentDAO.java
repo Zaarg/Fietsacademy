@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 
+import be.vdab.entities.Campus;
 import be.vdab.entities.Docent;
 import be.vdab.valueobjects.AantalDocentenPerWedde;
 import be.vdab.valueobjects.VoornaamEnId;
@@ -64,5 +65,11 @@ public class DocentDAO extends AbstractDAO {
 			  return null;
 		  }
 	} 
-		 
+	
+	public List<Docent> findBestBetaaldeVanEenCampus(Campus campus) {
+		  return getEntityManager()
+		    .createNamedQuery("Docent.findBestBetaaldeVanEenCampus", Docent.class)
+		       .setParameter("campus", campus)
+		       .getResultList();
+	} 	 
 } 
